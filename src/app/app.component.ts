@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import * as speechCommands from '@tensorflow-models/speech-commands';
 import * as tf from '@tensorflow/tfjs';
 
-declare const speechCommands: any;
 
 @Component({
   selector: 'app-root',
@@ -18,7 +18,7 @@ export class AppComponent {
   private NUM_FRAMES = 3;
   private INPUT_SHAPE = [this.NUM_FRAMES, 232, 1];
 
-  public predictWord() {
+  private predictWord() {
     // Array of words that the recognizer is trained to recognize.
     const words = this.recognizer.wordLabels();
     this.recognizer.listen((scores: any) => {
@@ -32,7 +32,7 @@ export class AppComponent {
     }, { probabilityThreshold: 0.75 });
   }
 
-  public async app() {
+  private async app() {
     this.recognizer = speechCommands.create('BROWSER_FFT');
     await this.recognizer.ensureModelLoaded();
     this.buildModel();
@@ -60,7 +60,7 @@ export class AppComponent {
     });
   }
 
-  public normalize(x: any) {
+  private normalize(x: any) {
     const mean = -100;
     const std = 10;
     return x.map((x: any) => (x - mean) / std);
@@ -89,7 +89,7 @@ export class AppComponent {
     this.toggleButtons(true);
   }
 
-  public buildModel() {
+  private buildModel() {
     this.model = tf.sequential();
     this.model.add(tf.layers.depthwiseConv2d({
       depthMultiplier: 8,
@@ -108,18 +108,18 @@ export class AppComponent {
     });
   }
 
-  public toggleButtons(enable: any) {
+  private toggleButtons(enable: any) {
     document.querySelectorAll('button').forEach(b => b.disabled = !enable);
   }
 
-  public flatten(tensors: any) {
+  private flatten(tensors: any) {
     const size = tensors[0].length;
     const result = new Float32Array(tensors.length * size);
     tensors.forEach((arr: any, i: any) => result.set(arr, i * size));
     return result;
   }
 
-  public async moveSlider(labelTensor: any) {
+  private async moveSlider(labelTensor: any) {
     const label = (await labelTensor.data())[0];
     const console = document.getElementById('console');
     console!.textContent = label;
