@@ -1,9 +1,9 @@
-<button id="left" onmousedown="collect(0)" onmouseup="collect(null)">Left</button>
-<button id="right" onmousedown="collect(1)" onmouseup="collect(null)">Right</button>
-<button id="noise" onmousedown="collect(2)" onmouseup="collect(null)">Noise</button>
+<button id="left" (mousedown)="this.collect(0)" (mouseup)="this.collect(null)">Left</button>
+<button id="right" (mousedown)="this.collect(1)" (mouseup)="this.collect(null)">Right</button>
+<button id="noise" (mousedown)="this.collect(2)" (mouseup)="this.collect(null)">Noise</button>
 <br /><br />
-<button id="train" onclick="train()">Train</button>
+<button id="train" (click)="train()">Train</button>
 <br /><br />
-<button id="listen" onclick="listen()">Listen</button>
+<button id="listen" (click)="listen()">Listen</button>
 <input type="range" id="output" min="0" max="10" step="0.1">
 <div id="console"></div>

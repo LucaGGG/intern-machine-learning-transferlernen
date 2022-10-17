@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import * as speechCommands from '@tensorflow-models/speech-commands';
 import * as tf from '@tensorflow/tfjs';
-
+import { ScriptService } from './../services/script.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +10,9 @@ import * as tf from '@tensorflow/tfjs';
 })
 export class AppComponent {
 
+  constructor(
+    private scriptService: ScriptService
+  ) { }
 
   title = 'transfer-lernen';
   private recognizer: any;
@@ -17,6 +20,10 @@ export class AppComponent {
   private model: any;
   private NUM_FRAMES = 3;
   private INPUT_SHAPE = [this.NUM_FRAMES, 232, 1];
+
+  async ngOnInit() {
+    this.app()
+  }
 
   private predictWord() {
     // Array of words that the recognizer is trained to recognize.
@@ -47,8 +54,8 @@ export class AppComponent {
     if (label == null) {
       return;
     }
-    this.recognizer.listen(async (spectrogram: { frameSize: any, data: any }) => {
-      let vals = this.normalize(spectrogram.data.subarray(-spectrogram.frameSize * this.NUM_FRAMES));
+    this.recognizer.listen(async (spectrogramParam: { spectrogram: Spectrogram }) => {
+      let vals = this.normalize(spectrogramParam.spectrogram.data.subarray(-spectrogramParam.spectrogram.frameSize * this.NUM_FRAMES));
       this.examples.push({ vals, label });
       const console = document.querySelector('#console');
       console!.textContent =
@@ -127,10 +134,11 @@ export class AppComponent {
       return;
     }
     let delta = 0.1;
-    const output = document.getElementById('output') as any;
-    let prevValue = output!.value;
+    const slider = document.getElementById('output') as any;
+    let prevValue = slider!.valueAsNumber;
     prevValue =
       prevValue + (label === 0 ? -delta : delta);
+    slider.valueAsNumber = prevValue;
   }
 
   public listen() {
@@ -146,8 +154,8 @@ export class AppComponent {
     listen!.textContent = 'Stop';
     listen!.disabled = false;
 
-    this.recognizer.listen(async (spectrogram: { frameSize: any, data: any }) => {
-      const vals = this.normalize(spectrogram.data.subarray(-spectrogram.frameSize * this.NUM_FRAMES));
+    this.recognizer.listen(async (spectrogramParam: { spectrogram: Spectrogram }) => {
+      const vals = this.normalize(spectrogramParam.spectrogram.data.subarray(-spectrogramParam.spectrogram.frameSize * this.NUM_FRAMES));
       const input = tf.tensor(vals, [1, ...this.INPUT_SHAPE]);
       const probs = this.model.predict(input);
       const predLabel = probs.argMax(1);
@@ -161,3 +169,7 @@ export class AppComponent {
   }
 }
 
+export class Spectrogram {
+  frameSize: any;
+  data: any;
+}
