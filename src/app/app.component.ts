@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import * as speechCommands from '@tensorflow-models/speech-commands';
 import * as tf from '@tensorflow/tfjs';
-import { ScriptService } from './../services/script.service';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +9,7 @@ import { ScriptService } from './../services/script.service';
 })
 export class AppComponent {
 
-  constructor(
-    private scriptService: ScriptService
-  ) { }
+  constructor() { }
 
   title = 'transfer-lernen';
   private recognizer: any;
